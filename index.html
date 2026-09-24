@@ -24,6 +24,7 @@
 <meta name="twitter:description" content="משפחה אחת. שתי ארצות. מסע אחד. פסטיבל חיפה ה־42: יום שלישי 29.9.2026, 18:30.">
 <meta name="twitter:image" content="https://nfed.github.io/promo/share.jpg">
 <meta name="theme-color" content="#0E0F11">
+<meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230E0F11'/%3E%3Crect x='30.5' y='8' width='3' height='48' fill='%23B58A3C'/%3E%3Crect x='10' y='40' width='16' height='3' fill='%23EDE7DA'/%3E%3Crect x='38' y='21' width='16' height='3' fill='%23EDE7DA'/%3E%3C/svg%3E">
 <!-- נתונים מובנים לגוגל: סרט + אירוע הקרנה -->
 <script type="application/ld+json">
@@ -56,7 +57,8 @@
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-html{ scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px); scroll-behavior:smooth; height:100%; }
+/* רקע כהה מפורש גם ל־html: ספארי 26 ומעלה באייפון לא משתמש ב־theme-color, וצובע את סרגלי הדפדפן לפי רקע העמוד */
+html{ scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px); scroll-behavior:smooth; height:100%; background:#0E0F11; color-scheme:dark; }
 *,*::before,*::after{ box-sizing:inherit; }
 body{
   margin:0; min-height:100%;
@@ -104,7 +106,6 @@ figure figcaption{ font-size:.85rem; line-height:1.4; margin-top:.5rem; }
 .count-wrap > .count[data-countdown]{ margin-top:.4rem; }
 [data-countdown] b{ font-variant-numeric:tabular-nums; }
 .stats b{ white-space:nowrap; }
-.stats-note{ margin-top:1.25rem; }
 [data-countdown] i{ font-style:normal; line-height:1; opacity:.75; padding:0 .1rem; }
 [data-countdown] > div{ min-width:0; flex:1 1 0; }
 .count-wrap .past{ direction:rtl; unicode-bidi:isolate; text-align:start; }
@@ -237,6 +238,8 @@ body.menu-open{ overflow:hidden; position:fixed; inset-inline:0; width:100%; }
 .d6 .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.5rem 2rem; margin:2rem 0 .5rem; }
 .d6 .stats b{ display:block; font-family:"Frank Ruhl Libre",serif; font-size:clamp(2.2rem,4vw,3.4rem); font-weight:700; line-height:1; color:var(--brass); }
 .d6 .stats span{ font-size:.95rem; color:var(--muted); }
+/* שורת הזיכרון לנספי הדרך: סריף שקט בצבע הטקסט (לא זהב), ממורכזת בין קווים דקים */
+.d6 .memorial{ font-family:"Frank Ruhl Libre",serif; font-weight:400; font-size:clamp(1.3rem,2.2vw,1.65rem); line-height:1.5; color:var(--ink); text-align:center; text-wrap:balance; margin:2rem 0 0; padding:1.5rem 1rem; border-block:1px solid rgba(237,231,218,.14); }
 .d6 .tl li{ display:grid; grid-template-columns:120px minmax(0,1fr); gap:1rem; padding-block:1rem; border-top:1px solid rgba(255,255,255,.08); }
 .d6 .tl .yr{ font-family:"Frank Ruhl Libre",serif; font-size:1.4rem; color:var(--brass); line-height:1.2; }
 .d6 .tl strong{ display:block; font-weight:500; }
@@ -384,7 +387,7 @@ const CONTENT = {
       { n: "מעל 8,000", t: "יהודים הגיעו לישראל דרך סודן בשנים 1977–1984" },
       { n: "כ\"ח באייר", t: "יום הזיכרון הממלכתי לנספי הדרך, בהר הרצל" },
     ],
-    // נתון הנספים מוצג כמשפט רגיל מתחת לנתונים, לא ככרטיס מספר
+    // נתון הנספים: שורת זיכרון נפרדת מיד אחרי הפתיח של המדור, לא כרטיס מספר
     toll: "מעל 4,000 נספו בדרך: במסע, במחנות ובמחלות.",
     timeline: [
       { year: "1974", title: "ההפיכה הצבאית באתיופיה", text: "קץ שלטונו של הקיסר היילה סלאסי. החונטה הצבאית (הדֶרְג) בראשות מנגיסטו תופסת את השלטון; שנים של טרור, מלחמות אזרחים ורעב." },
@@ -598,7 +601,7 @@ function storyBlock() {
   const [p1, ...rest] = CONTENT.synopsis.paras;
   return `<p class="lead">${CONTENT.synopsis.lead}</p><p>${p1}</p>${readMore("הסינופסיס המלא", rest.map((p) => `<p>${p}</p>`).join("") + `<p class="pull-sm">${CONTENT.synopsis.pull}</p>`)}`;
 }
-const contextBlock = () => `<p class="lead">${CONTENT.context.intro}</p>${stats()}<p class="stats-note">${CONTENT.context.toll}</p>${readMore("ציר הזמן המלא", timeline())}`;
+const contextBlock = () => `<p class="lead">${CONTENT.context.intro}</p><p class="memorial">${CONTENT.context.toll}</p>${stats()}${readMore("ציר הזמן המלא", timeline())}`;
 const productionBlock = () => `<p class="lead">${CONTENT.production.intro}</p>${readMore("עוד על ההפקה", highlights() + `<p class="quote">${CONTENT.production.quote}</p>`)}`;
 function directorBlock() {
   const [p1, ...rest] = CONTENT.directorBio.paras;
