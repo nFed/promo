@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
@@ -38,9 +37,9 @@
 {"@context":"https://schema.org","@type":"ScreeningEvent","name":"האגר – ארץ: הקרנה בפסטיבל הסרטים הבינלאומי ה־42 חיפה",
  "startDate":"2026-09-29T18:30:00+03:00","endDate":"2026-09-29T20:00:00+03:00",
  "eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode",
- "location":{"@type":"Place","name":"פסטיבל הסרטים הבינלאומי חיפה, מרכז הכרמל","address":{"@type":"PostalAddress","addressLocality":"חיפה","addressCountry":"IL"}},
+ "location":{"@type":"Place","name":"מרכז רפפורט לתרבות","address":{"@type":"PostalAddress","streetAddress":"שד' הנשיא 140","addressLocality":"חיפה","addressCountry":"IL"}},
  "workPresented":{"@type":"Movie","name":"האגר – ארץ"},"image":"https://nfed.github.io/promo/share.jpg",
- "offers":{"@type":"Offer","url":"https://www.haifaff.co.il/","availability":"https://schema.org/InStock"},
+ "offers":{"@type":"Offer","url":"https://www.haifaff.co.il/%D7%A1%D7%9C_%D7%94%D7%A7%D7%A0%D7%99%D7%95%D7%AA/28109","availability":"https://schema.org/InStock"},
  "organizer":{"@type":"Organization","name":"פסטיבל הסרטים הבינלאומי חיפה","url":"https://www.haifaff.co.il/"}}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,15 +79,12 @@ h1,h2,h3,p,ul,ol,dl,figure{ margin:0; }
 ul,ol{ padding:0; list-style:none; }
 :focus-visible{ outline:3px solid currentColor; outline-offset:3px; }
 /* כפתורים מלאים: טבעת כפולה שנראית על כל רקע */
-.btn:focus-visible, .newsletter button:focus-visible, .mnav-close:focus-visible, .mnav-btn:focus-visible, .sw-toggle:focus-visible, .sw-btns button:focus-visible{ outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 2px #000; }
+.btn:focus-visible, .mnav-close:focus-visible, .mnav-btn:focus-visible, .sw-toggle:focus-visible, .sw-btns button:focus-visible{ outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 2px #000; }
 .skip{ position:absolute; inset-inline-start:1rem; top:-100px; z-index:2000; padding:.6rem 1rem; background:#000; color:#fff; text-decoration:none; border-radius:4px; }
 .skip:focus{ top:calc(env(safe-area-inset-top,0px) + .5rem); }
 /* מספרים וסיומות בתוך טקסט עברי: בידוד כיוון */
 a[href^="tel:"], .ltr{ direction:ltr; unicode-bidi:isolate; white-space:nowrap; }
 a[href^="tel:"]{ display:inline-block; padding:.35rem .4rem; margin:-.35rem -.4rem; }
-.newsletter input[type=email]{ direction:ltr; text-align:right; }
-/* placeholder בניגודיות 4.5:1 לפחות — הצבע נקבע בכל עיצוב; פיירפוקס מחליש אותו כברירת מחדל */
-.newsletter input::placeholder{ opacity:1; }
 .vh{ position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 .scroll-x{ overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .scroll-x::-webkit-scrollbar{ display:none; }
@@ -318,10 +314,6 @@ body.d1{ background:#141110; color:#EFE7D8; }
 .d1 .footer .wrap{ display:grid; gap:2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
 .d1 .footer b{ color:var(--ink); font-weight:500; display:block; margin-bottom:.4rem; }
 .d1 .footer .release{ font-family:"Frank Ruhl Libre",serif; font-size:1.6rem; color:var(--ink); line-height:1.2; }
-.d1 .newsletter{ display:flex; gap:.5rem; margin-top:.75rem; }
-.d1 .newsletter input{ flex:1 1 auto; min-width:0; background:transparent; border:1px solid rgba(255,255,255,.2); color:var(--ink); padding:.7rem .9rem; border-radius:3px; font:inherit; }
-.d1 .newsletter input::placeholder{ color:var(--muted); }
-.d1 .newsletter .btn{ padding:.7rem 1.1rem; }
 .d1 .copy{ grid-column:1/-1; border-top:1px solid rgba(255,255,255,.08); padding-top:1.25rem; font-size:.85rem; }
 
 @media (max-width:860px){
@@ -333,7 +325,6 @@ body.d1{ background:#141110; color:#EFE7D8; }
   .d1 .dphoto{ max-width:260px; }
   .d1 .nav .btn{ display:none; }
   .d1 .tl li{ grid-template-columns:1fr; gap:.2rem; }
-  .d1 .newsletter{ flex-direction:column; }
   .d1 .horizon{ display:none; }
   .d1 .hero-meta{ margin-top:1.25rem; }
   .d1 .count{ margin-top:1.25rem; }
@@ -477,13 +468,8 @@ body.d3{ background:#E8D9BE; color:#2B2622; }
 
 .d3 .footer{ padding-block:3rem 2rem; border-top:2px solid var(--ink); font-size:.95rem; }
 .d3 .footer .wrap{ display:grid; gap:2rem; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
-.d3 .newsletter input{ min-width:180px; }
 .d3 .footer b{ display:block; font-weight:500; margin-bottom:.3rem; }
 .d3 .footer .release{ font-family:"Suez One",serif; font-size:1.7rem; }
-.d3 .newsletter{ display:flex; gap:.5rem; margin-top:.75rem; }
-.d3 .newsletter input{ flex:1; min-width:0; border:2px solid var(--ink); background:var(--bone); padding:.65rem .9rem; border-radius:2px; font:inherit; }
-.d3 .newsletter input::placeholder{ color:#5b514a; }
-.d3 .newsletter .btn{ padding:.6rem 1.1rem; }
 .d3 .copy{ grid-column:1/-1; border-top:1px solid var(--route-soft); padding-top:1.25rem; font-size:.85rem; }
 
 @media (max-width:860px){
@@ -497,7 +483,6 @@ body.d3{ background:#E8D9BE; color:#2B2622; }
   .d3 .director{ grid-template-columns:1fr; }
   .d3 .dphoto{ max-width:260px; }
   .d3 .tl li{ grid-template-columns:1fr; gap:.15rem; }
-  .d3 .newsletter{ flex-direction:column; }
   .d3 .count b{ font-size:clamp(1.6rem,8.5vw,2.4rem); }
   .d3 .count i{ font-size:clamp(1.3rem,6.5vw,2.2rem); padding:0; }
   .d4 .count b{ font-size:clamp(1.6rem,8.5vw,2.4rem); }
@@ -645,10 +630,6 @@ body.d4{ background:#0E1013; color:#F7F3EA; }
 .d4 .footer .release{ font-family:"Secular One",sans-serif; font-size:1.6rem; color:var(--brass); }
 .d4 .footer p{ max-width:40ch; }
 .d4 .footer .f-zion p{ margin-inline-start:auto; }
-.d4 .newsletter{ display:flex; gap:.5rem; margin-top:.75rem; justify-content:flex-end; }
-.d4 .newsletter input{ flex:1; min-width:0; max-width:320px; border:1px solid var(--ink); background:#fff; padding:.65rem .9rem; border-radius:0; font:inherit; }
-.d4 .newsletter input::placeholder{ color:var(--muted-l); }
-.d4 .newsletter .btn{ padding:.6rem 1.1rem; }
 .d4 .copy{ margin-top:1.5rem; opacity:.7; font-size:.85rem; }
 
 @media (max-width:860px){
@@ -678,8 +659,6 @@ body.d4{ background:#0E1013; color:#F7F3EA; }
   .d4 .footer{ grid-template-columns:1fr; }
   .d4 .footer .f-zion{ text-align:right; }
   .d4 .footer .f-zion p{ margin-inline-start:0; }
-  .d4 .newsletter{ justify-content:flex-start; flex-direction:column; }
-  .d4 .newsletter input{ max-width:none; }
 }
 
 
@@ -803,10 +782,6 @@ body.d6{ background:#0E0F11; color:#EDE7DA; }
 .d6 .footer .wrap{ display:grid; gap:2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
 .d6 .footer b{ display:block; color:var(--ink); font-weight:500; margin-bottom:.35rem; }
 .d6 .footer .release{ font-family:"Frank Ruhl Libre",serif; font-size:1.6rem; color:var(--ink); }
-.d6 .newsletter{ display:flex; gap:.5rem; margin-top:.75rem; }
-.d6 .newsletter input{ flex:1; min-width:0; background:transparent; border:1px solid rgba(255,255,255,.2); color:var(--ink); padding:.7rem .9rem; border-radius:3px; font:inherit; }
-.d6 .newsletter input::placeholder{ color:var(--muted); }
-.d6 .newsletter .btn{ padding:.7rem 1.1rem; }
 .d6 .copy{ grid-column:1/-1; border-top:1px solid rgba(255,255,255,.08); padding-top:1.25rem; font-size:.85rem; }
 
 @media (max-width:860px){
@@ -824,7 +799,6 @@ body.d6{ background:#0E0F11; color:#EDE7DA; }
   .d6 .director, .d6 .credits, .d6 .screening-grid{ grid-template-columns:1fr; }
   .d6 .dphoto{ max-width:260px; }
   .d6 .tl li{ grid-template-columns:1fr; gap:.15rem; }
-  .d6 .newsletter{ flex-direction:column; }
   .d6 .nav .btn{ display:inline-flex; padding:.5rem .8rem; font-size:.85rem; margin-inline-start:auto; }
   .d6 .nav .mnav-btn{ margin-inline-start:.5rem; }
   .d6 .beat{ min-height:56vh; min-height:56svh; }
@@ -879,10 +853,10 @@ const CONTENT = {
     festivalShort: "פסטיבל חיפה ה־42",
     section: "תחרות הקולנוע הישראלי",
     note: "הקרנה אחת בלבד, בנוכחות הבמאי שמואל ברו, השחקנים וצוות ההפקה",
-    venue: "מתחם הפסטיבל, מרכז הכרמל, חיפה",
-    venueNote: "האולם המדויק מתפרסם בלוח ההקרנות באתר הפסטיבל",
+    venue: "מרכז רפפורט לתרבות",
+    venueNote: "שד' הנשיא 140, מרכז הכרמל, חיפה",
     festivalDates: "26.9–3.10.2026, חול המועד סוכות",
-    ticketsUrl: "https://www.haifaff.co.il/", // להחליף בקישור הישיר לרכישת כרטיסים לסרט
+    ticketsUrl: "https://www.haifaff.co.il/%D7%A1%D7%9C_%D7%94%D7%A7%D7%A0%D7%99%D7%95%D7%AA/28109", // דף הרכישה של ההקרנה באתר הפסטיבל (אירוע 28109)
     phone: "*9300",
     phoneHref: "tel:*9300",
     icsFile: "hager-screening.ics", // קובץ יומן, לצד index.html באתר
@@ -1050,7 +1024,7 @@ const NAV = [
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const S = CONTENT.screening;
 const M = CONTENT.media;
-// מצב "אחרי ההקרנה": שעתיים אחרי תחילת ההקרנה כל מסלול הכרטיסים מתחלף בהרשמה לעדכונים
+// מצב "אחרי ההקרנה": שעתיים אחרי תחילת ההקרנה כפתורי הכרטיסים ופס הכרטיסים יורדים מהדף
 const PAST = S.past === true || Date.now() > new Date(S.iso).getTime() + 2 * 36e5;
 const NEW_WIN = `<span class="vh"> (נפתח בחלון חדש)</span>`;
 const ltr = (s) => `<span class="ltr">${s}</span>`;
@@ -1063,7 +1037,7 @@ function gcalLink() {
     text: "האגר – ארץ: הקרנה בפסטיבל הסרטים הבינלאומי חיפה",
     dates: "20260929T153000Z/20260929T173000Z",
     details: "תחרות הקולנוע הישראלי, פסטיבל חיפה ה־42. בנוכחות הבמאי שמואל ברו, השחקנים וצוות ההפקה.",
-    location: "פסטיבל הסרטים הבינלאומי חיפה, מרכז הכרמל",
+    location: "מרכז רפפורט לתרבות, שד' הנשיא 140, חיפה",
   });
   return "https://calendar.google.com/calendar/render?" + p.toString();
 }
@@ -1072,9 +1046,7 @@ const navLinks = () => NAV.map((n) => `<li><a href="#${n.id}">${n.t}</a></li>`).
 const brand = (cls = "brand") => `<a class="${cls}" href="#top">${CONTENT.fullTitle}</a>`;
 const titleLockup = (cls = "title") => `<h1 class="${cls}">${CONTENT.title} <span class="t2">${CONTENT.subtitle}</span></h1>`;
 const amharicSub = (cls = "sub") => `<p class="${cls}"><span class="am" lang="am">${CONTENT.titleAmharic}</span><span>${CONTENT.amharicNote}</span></p>`;
-const ticketBtn = (cls = "btn", label = "לרכישת כרטיסים") => (PAST
-  ? `<a class="${cls}" href="#updates">${label.length <= 10 ? "עדכנו אותי" : "עדכנו אותי על ההפצה"}</a>`
-  : `<a class="${cls}" href="${S.ticketsUrl}" target="_blank" rel="noopener">${label}${NEW_WIN}</a>`);
+const ticketBtn = (cls = "btn", label = "לרכישת כרטיסים") => (PAST ? "" : `<a class="${cls}" href="${S.ticketsUrl}" target="_blank" rel="noopener">${label}${NEW_WIN}</a>`);
 const calBtn = (cls = "btn ghost") => (PAST ? "" : `<a class="${cls}" href="${gcalLink()}" target="_blank" rel="noopener">הוספה ליומן${NEW_WIN}</a>`);
 const trailerBtn = (cls = "btn ghost", label = "לטריילר") => (M.trailerUrl ? `<a class="${cls}" href="${esc(M.trailerUrl)}" target="_blank" rel="noopener">${label}${NEW_WIN}</a>` : "");
 const whenLine = () => (PAST ? `הוקרן ב${S.festivalShort}, ${S.weekday} ${S.date}` : `${S.weekday} ${S.date}, ${S.time}`);
@@ -1091,7 +1063,7 @@ function mobileMenu(btn = "btn") {
   </div>`;
 }
 function ticketBar(btn = "btn") {
-  if (PAST) return `<div class="ticket-bar"><span>${CONTENT.release}<br><small>הירשמו לעדכונים על ההפצה</small></span>${ticketBtn(btn, "עדכנו אותי")}</div>`;
+  if (PAST) return "";
   return `<div class="ticket-bar"><span>${S.weekday} ${S.date}, ${S.time}<br><small>${S.festivalShort}</small></span>${ticketBtn(btn, "כרטיסים")}</div>`;
 }
 function navHtml({ btn = "btn", label = "כרטיסים" } = {}) {
@@ -1148,14 +1120,6 @@ const crew = (cls = "crew") => `<dl class="${cls}">${CONTENT.crew.map((c) => `<d
 const contacts = (cls = "contacts") => `<ul class="${cls}">${CONTENT.press.contacts.map((c) => `<li><b>${c.name}</b><span>${c.role}</span></li>`).join("")}</ul>`;
 const readMore = (label, html) => `<details class="more"><summary>${label}</summary><div class="more-body">${html}</div></details>`;
 const pressDetails = () => readMore("ההודעה לעיתונות המלאה", `<p>${CONTENT.press.releaseText}</p>`);
-function newsletter(btnCls = "btn") {
-  return `<form class="newsletter" id="updates" onsubmit="event.preventDefault(); const i=this.querySelector('input'), m=this.querySelector('.nl-msg'); if(!i.validity.valid){ m.textContent='נא להזין כתובת אימייל תקינה'; i.focus(); return; } m.textContent='נרשמת (יחובר לשירות הדיוור בשלב הבא)'; this.querySelector('button').disabled=true;">
-    <label class="vh" for="nl-email">כתובת אימייל</label>
-    <input id="nl-email" type="email" placeholder="כתובת אימייל" autocomplete="email" inputmode="email" required aria-describedby="nl-msg">
-    <button class="${btnCls}" type="submit">עדכנו אותי</button>
-    <p class="nl-msg" id="nl-msg" role="status" aria-live="polite"></p>
-  </form>`;
-}
 const supporters = () => CONTENT.supporters.map((s) => `<div>${s}</div>`).join("");
 function screeningBlock() {
   return `<div class="screening">
@@ -1268,7 +1232,7 @@ ${navHtml()}${mobileMenu()}
 </main>
 
 <footer class="footer"><div class="wrap">
-  <div><div class="release">${CONTENT.release}</div><p>הירשמו לעדכונים על ההפצה ומועדי ההקרנה.</p>${newsletter()}</div>
+  <div><div class="release">${CONTENT.release}</div></div>
   <div><b>הפקה</b><div>זדפילמס, ליו הפקות</div><b style="margin-top:1rem">בתמיכת</b>${supporters()}</div>
   <div class="copy">${footerCopy()}</div>
 </div></footer>
@@ -1369,7 +1333,7 @@ ${navHtml({ btn: "btn accent" })}${mobileMenu("btn accent")}
 </main>
 
 <footer class="footer"><div class="wrap">
-  <div><div class="release">${CONTENT.release}</div><p>הירשמו לעדכונים על ההפצה ומועדי ההקרנה.</p>${newsletter()}</div>
+  <div><div class="release">${CONTENT.release}</div></div>
   <div><b>הפקה</b><div>זדפילמס, ליו הפקות</div><b style="margin-top:1rem">בתמיכת</b>${supporters()}</div>
   <div class="copy">${footerCopy()}</div>
 </div></footer>
@@ -1453,8 +1417,8 @@ ${mobileMenu()}
 </main>
 
 <footer class="footer">
-  <div class="f-earth"><div class="release">${CONTENT.release}</div><b style="margin-top:1rem">הפקה</b><div>זדפילמס, ליו הפקות</div><b style="margin-top:1rem">בתמיכת</b>${supporters()}<div class="copy">${footerCopy()}</div></div>
-  <div class="f-zion"><b>עדכונים</b><p>הירשמו לעדכונים על ההפצה ומועדי ההקרנה.</p>${newsletter()}</div>
+  <div class="f-earth"><b>הפקה</b><div>זדפילמס, ליו הפקות</div><b style="margin-top:1rem">בתמיכת</b>${supporters()}<div class="copy">${footerCopy()}</div></div>
+  <div class="f-zion"><div class="release">${CONTENT.release}</div></div>
 </footer>
 ${ticketBar()}
 </div>`;
@@ -1546,7 +1510,7 @@ ${beats}
 
 <div class="weave" aria-hidden="true"></div>
 <footer class="footer"><div class="wrap">
-  <div><div class="release">${CONTENT.release}</div><p>הירשמו לעדכונים על ההפצה ומועדי ההקרנה.</p>${newsletter()}</div>
+  <div><div class="release">${CONTENT.release}</div></div>
   <div><b>הפקה</b><div>זדפילמס, ליו הפקות</div><b style="margin-top:1rem">בתמיכת</b>${supporters()}</div>
   <div class="copy">${footerCopy()}</div>
 </div></footer>
@@ -1678,6 +1642,7 @@ ${ticketBar()}
   // צופים בפתיח כולו ולא רק בכפתורים: הוא תמיד על המסך בטעינה, כך שגם קפיצה ישירה לעוגן (בלי גלילה חלקה) מדליקה את הפס
   function setupBar() {
     if (barObserver) barObserver.disconnect();
+    if (!app.querySelector(".ticket-bar")) return; // אחרי ההקרנה אין פס
     const hero = app.querySelector(".hero");
     if (!hero || !("IntersectionObserver" in window)) { document.body.classList.add("show-bar"); return; }
     barObserver = new IntersectionObserver(([en]) => document.body.classList.toggle("show-bar", !en.isIntersecting && en.boundingClientRect.top < 0));

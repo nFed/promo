@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//nfed.github.io//Hager promo//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:hager-screening-20260929@nfed.github.io
+DTSTAMP:20260924T101506Z
+SEQUENCE:1
+DTSTART:20260929T153000Z
+DTEND:20260929T173000Z
+SUMMARY:האגר – ארץ: הקרנה בפסטיבל הסרטים הבי
+ נלאומי חיפה
+LOCATION:מרכז רפפורט לתרבות\, שד' הנשיא 140\, חיפ
+ ה
+DESCRIPTION:תחרות הקולנוע הישראלי\, פסטיבל חיפ
+ ה ה־42. בנוכחות הבמאי שמואל ברו\, השחקנים ו
+ צוות ההפקה.\nכרטיסים: https://www.haifaff.co.il/%D7%A1%D7%
+ 9C_%D7%94%D7%A7%D7%A0%D7%99%D7%95%D7%AA/28109\nאתר הסרט: https://nf
+ ed.github.io/promo/
+URL:https://nfed.github.io/promo/
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
