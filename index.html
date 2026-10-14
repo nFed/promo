@@ -9,6 +9,8 @@
 :root{
   --bg:#e7e4de;
   --panel:rgba(250,249,246,.9);
+  --sheet:#faf9f6;
+  --track:rgba(28,32,35,.07);
   --ink:#1c2023;
   --muted:#5d6468;
   --line:rgba(28,32,35,.14);
@@ -22,10 +24,10 @@
   --f-ui:"IBM Plex Sans Hebrew","Segoe UI",Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121416;--panel:rgba(22,25,28,.88);--ink:#ecebe7;--muted:#a2a9ad;--line:rgba(255,255,255,.13);
+  --bg:#121416;--panel:rgba(22,25,28,.88);--sheet:#1b1e21;--track:rgba(255,255,255,.08);--ink:#ecebe7;--muted:#a2a9ad;--line:rgba(255,255,255,.13);
   --accent:#8fbcd0;--accent-ink:#0d1a20;--map-floor:#2a2e31;--map-room:#33505d;--map-wall:#e6e3dd;--map-furn:#5a5f62;color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#121416;--panel:rgba(22,25,28,.88);--ink:#ecebe7;--muted:#a2a9ad;--line:rgba(255,255,255,.13);
+  --bg:#121416;--panel:rgba(22,25,28,.88);--sheet:#1b1e21;--track:rgba(255,255,255,.08);--ink:#ecebe7;--muted:#a2a9ad;--line:rgba(255,255,255,.13);
   --accent:#8fbcd0;--accent-ink:#0d1a20;--map-floor:#2a2e31;--map-room:#33505d;--map-wall:#e6e3dd;--map-furn:#5a5f62;color-scheme:dark}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);
@@ -43,20 +45,30 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
 .room{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px}
 #roomName{font-weight:600;font-size:15px}
 .dims{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.top-l{position:absolute;top:calc(max(16px,env(safe-area-inset-top,0px)));left:max(16px,env(safe-area-inset-left,0px));
-  display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.seg{display:flex;padding:3px;gap:3px}
-.seg button{font:500 13px var(--f-ui);color:var(--ink);background:transparent;border:0;border-radius:7px;padding:7px 12px;cursor:pointer;min-width:58px}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.seg button:focus-visible,.rooms button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rooms button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .bottom{position:absolute;left:0;right:0;bottom:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;direction:ltr}
-.map{padding:8px;order:1;direction:rtl}
+.map{padding:8px;order:1;direction:rtl;display:none}
+.map-on .map{display:block}
 #map{display:block;width:250px;height:auto;cursor:crosshair}
 .maplabel{font-size:11px;color:var(--muted);margin:0 2px 6px;display:flex;justify-content:space-between;gap:8px}
-.rooms{pointer-events:auto;display:flex;gap:6px;overflow-x:auto;padding:6px;scrollbar-width:none;align-self:center;max-width:100%}
+.roomsbar{pointer-events:auto;position:relative;align-self:center;max-width:100%;min-width:0;display:flex}
+.rooms{--fl:0px;--fr:0px;display:flex;gap:6px;overflow-x:auto;padding:6px;scrollbar-width:none;min-width:0;scroll-behavior:smooth;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%)}
+.rarrow{position:absolute;top:50%;width:30px;height:30px;margin-top:-15px;border-radius:15px;border:1px solid var(--line);
+  background:var(--sheet);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;z-index:1;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);transition:opacity .2s}
+.rarrow svg{width:16px;height:16px}
+.rarrow.l{left:4px}.rarrow.r{right:4px}
+.rarrow[hidden]{display:none}
+.rarrow:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rarrow.pulse{animation:nudge 1.2s ease-in-out 2}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(var(--dx,-4px))}}
+.rarrow.r{--dx:4px}
+@media (prefers-reduced-motion:reduce){.rooms{scroll-behavior:auto}.rarrow.pulse{animation:none}}
 .rooms::-webkit-scrollbar{display:none}
 .rooms button{flex:none;font:500 13px var(--f-ui);color:var(--ink);background:transparent;border:1px solid transparent;
   border-radius:7px;padding:7px 11px;cursor:pointer;white-space:nowrap}
@@ -66,42 +78,85 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
 .hint.gone{opacity:0}
 .joy{pointer-events:auto;width:116px;height:116px;border-radius:50%;position:relative;order:2;display:none;touch-action:none}
 .joy .knob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--accent);opacity:.85}
-.lens{padding:8px 12px 10px;width:178px;display:flex;flex-direction:column;gap:6px}
-.lens label{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted)}
-.lens output{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
-.lens input{width:100%;accent-color:var(--accent);margin:0}
-.lens .ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 @media (pointer:coarse){.joy{display:block}}
 #loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);color:var(--muted);font:500 15px var(--f-ui);z-index:5}
-/* desktop defaults for the mobile-only pieces */
-.mbar{display:none}
-.tag{display:none}
-.top-l{direction:ltr}
-.panel{display:flex;flex-direction:column;gap:8px;align-items:flex-start;direction:rtl}
-.iconbtn{width:40px;height:40px;display:grid;place-items:center;color:var(--ink);cursor:pointer;padding:0}
-.iconbtn[aria-expanded="true"],.iconbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
-.iconbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.iconbtn svg{width:20px;height:20px}
+/* guide */
+.guide{position:fixed;inset:0;z-index:4;display:grid;place-items:center;background:rgba(12,14,16,.42);pointer-events:auto;
+  padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.gcard{background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:14px;width:100%;max-width:560px;max-height:100%;overflow:auto;
+  padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:16px}
+.gcard h2{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;margin:2px 0 0;text-wrap:balance}
+.gcard .lead{margin:0;color:var(--muted);line-height:1.55;max-width:60ch}
+.gsec{font-size:11px;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:0 0 8px}
+.how{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;margin:0;padding:0;list-style:none}
+.how li{display:flex;flex-direction:column;gap:2px;min-width:0;border-top:1px solid var(--line);padding-top:8px}
+.how b{font-weight:600;font-size:14px}
+.how span{color:var(--muted);font-size:13px;line-height:1.45}
+.groom{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.groom button{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;min-width:0}
+.groom button:hover{border-color:var(--accent)}
+.groom button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.groom b{font-weight:500;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.groom span{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.gfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.gfoot small{color:var(--muted);font-size:12px;max-width:34ch;line-height:1.45}
+.gstart{font:600 15px var(--f-ui);background:var(--accent);color:var(--accent-ink);border:0;border-radius:9px;padding:11px 20px;cursor:pointer}
+.gstart:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.only-touch{display:none}
+@media (pointer:coarse){.only-touch{display:inline}.only-desk{display:none}}
+@media (max-width:640px),(max-height:500px){
+  .guide{place-items:end center;padding-block:max(12px,env(safe-area-inset-top,0px)) 0}
+  .gcard{border-radius:16px 16px 0 0;padding:18px 16px calc(14px + env(safe-area-inset-bottom,0px));gap:14px;border-bottom:0}
+  .gcard h2{font-size:23px}
+  .how{gap:8px 14px}
+  .how span{font-size:12.5px}
+  .groom button{flex-direction:column;align-items:flex-start;gap:1px;padding:8px 10px}
+  .groom b{white-space:normal}
+  .gstart{flex:1}
+}
 .hint.gone{pointer-events:none}
+
+/* top-left controls. Desktop: one 224px rail = settings card + a tool row of the same width. */
+.tag{display:none}
+.top-l{position:absolute;top:max(16px,env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));
+  width:224px;display:flex;flex-direction:column;gap:8px;direction:ltr}
+.top-l>*{direction:rtl}
+.panel{order:1;display:flex;flex-direction:column;gap:12px;padding:12px}
+.mbar{order:2;display:flex;padding:4px;gap:4px}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl-h{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.ctl-h output{font-size:13px;letter-spacing:0;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:3px;padding:3px;border-radius:9px;background:var(--track)}
+.seg button{flex:1;font:500 13px var(--f-ui);color:var(--ink);background:transparent;border:0;border-radius:7px;padding:7px 0;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.lens input{width:100%;accent-color:var(--accent);margin:2px 0 0}
+.lens .ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.tool{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:36px;border:0;border-radius:7px;background:transparent;
+  color:var(--ink);font:500 13px var(--f-ui);cursor:pointer;padding:0 8px}
+.tool svg{width:18px;height:18px;flex:none}
+.tool:hover{background:var(--track)}
+.tool[aria-pressed="true"],.tool[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible,.tool:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#bPanel{display:none}
+@media (max-width:640px),(max-height:500px){
+  .tag{display:inline;font:700 13px var(--f-display);color:var(--accent)}
+  .top-l{width:auto;align-items:flex-start}
+  .mbar{order:1;border-radius:22px;height:44px;align-items:center}
+  .tool{flex:none;width:36px;height:36px;border-radius:18px;padding:0}
+  .tool .lbl{display:none}
+  #bPanel{display:flex}
+  .panel{order:2;display:none;width:224px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  .panel.open{display:flex}
+}
 
 /* phones: one slim top band, controls tucked into a sheet, plan on demand */
 @media (max-width:640px),(max-height:500px){
-  .top-r{min-width:0;padding:0 12px;height:40px;display:flex;align-items:center;border-radius:20px;max-width:calc(100vw - 140px)}
+  .top-r{min-width:0;padding:0 12px;height:44px;display:flex;align-items:center;border-radius:22px;max-width:calc(100vw - 32px - 152px)}
   .top-r .eyebrow,.top-r h1{display:none}
   .room{border:0;padding:0;gap:6px;flex-wrap:nowrap;min-width:0}
   #roomName{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .room .dims{font-size:11px;white-space:nowrap}
-  .tag{display:inline;font:700 13px var(--f-display);color:var(--accent)}
-  .mbar{display:flex;gap:8px}
-  .iconbtn{border-radius:20px}
-  .top-l{gap:8px}
-  .panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;gap:6px;
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.18);pointer-events:auto}
-  .panel.open{display:flex}
-  .panel .card{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
-  .panel .seg{padding:0}
-  .seg button{padding:7px 10px;min-width:56px}
-  .lens{width:200px;padding:4px 2px 2px}
   .bottom{gap:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
   .map{display:none;padding:6px}
   .map-on .map{display:block}
@@ -119,39 +174,48 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
 <canvas id="c" tabindex="0" aria-label="סיור תלת-ממדי בדירה"></canvas>
 <div id="loading">בונה את הדירה…</div>
 
-<div class="ui" dir="rtl">
+<div class="ui map-on" dir="rtl">
   <div class="card top-r">
     <div class="eyebrow">תוכנית 3C · 3 חדרים</div>
     <h1>דירה 3C</h1>
     <div class="room"><span class="tag">3C</span><span id="roomName">כניסה</span><span id="roomDims" class="dims"></span></div>
   </div>
   <div class="top-l">
-    <div class="mbar">
-      <button class="card iconbtn" id="bPanel" aria-expanded="false" aria-controls="panel" aria-label="תצוגה, תאורה ועדשה">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
-      </button>
-      <button class="card iconbtn" id="bMap" aria-pressed="false" aria-label="תוכנית הדירה">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
-      </button>
-    </div>
-    <div class="panel" id="panel">
-      <div class="card seg" role="group" aria-label="תצוגה">
-        <button id="bWalk" aria-pressed="true">סיור</button>
-        <button id="bTop" aria-pressed="false">מבט על</button>
+    <div class="card panel" id="panel">
+      <div class="ctl">
+        <div class="ctl-h">תצוגה</div>
+        <div class="seg" role="group" aria-label="תצוגה">
+          <button id="bWalk" aria-pressed="true">סיור</button>
+          <button id="bTop" aria-pressed="false">מבט על</button>
+        </div>
       </div>
-      <div class="card seg" role="group" aria-label="תאורה">
-        <button id="bDay" aria-pressed="true">יום</button>
-        <button id="bEve" aria-pressed="false">ערב</button>
+      <div class="ctl">
+        <div class="ctl-h">תאורה</div>
+        <div class="seg" role="group" aria-label="תאורה">
+          <button id="bDay" aria-pressed="true">יום</button>
+          <button id="bEve" aria-pressed="false">ערב</button>
+        </div>
       </div>
-      <div class="card lens">
-        <label for="lens">עדשה <output id="lensVal" for="lens">16 מ״מ</output></label>
+      <div class="ctl lens">
+        <label class="ctl-h" for="lens">עדשה <output id="lensVal" for="lens">16 מ״מ</output></label>
         <input type="range" id="lens" min="12" max="35" step="1" value="16">
         <div class="ends"><span>רחבה</span><span>צרה</span></div>
       </div>
     </div>
+    <div class="card mbar" role="toolbar" aria-label="כלים">
+      <button class="tool" id="bPanel" aria-expanded="false" aria-controls="panel" aria-label="תצוגה, תאורה ועדשה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+      <button class="tool" id="bMap" aria-pressed="true" aria-label="תוכנית הדירה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span class="lbl">תוכנית</span>
+      </button>
+      <button class="tool" id="bHelp" aria-label="מדריך הסיור">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.9" r=".6" fill="currentColor"/></svg><span class="lbl">מדריך</span>
+      </button>
+    </div>
   </div>
   <div class="bottom">
-    <div class="card hint" id="hint">גררו כדי להסתכל · W A S D או החיצים כדי ללכת · גלגלת לשינוי העדשה</div>
+    <div class="card hint gone" id="hint">גררו כדי להסתכל · W A S D או החיצים כדי ללכת · גלגלת לשינוי העדשה</div>
     <div class="row">
       <div class="card map">
         <div class="maplabel"><span>תוכנית</span><span>לחצו כדי לעבור</span></div>
@@ -159,7 +223,40 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
       </div>
       <div class="joy card" id="joy" aria-label="ג׳ויסטיק הליכה"><div class="knob" id="knob"></div></div>
     </div>
-    <nav class="card rooms" id="rooms" aria-label="מעבר לחדר"></nav>
+    <div class="card roomsbar">
+      <button class="rarrow l" id="rLeft" aria-label="עוד חדרים משמאל" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <nav class="rooms" id="rooms" aria-label="מעבר לחדר"></nav>
+      <button class="rarrow r" id="rRight" aria-label="עוד חדרים מימין" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="guide" id="guide" role="dialog" aria-modal="true" aria-labelledby="gTitle" dir="rtl">
+  <div class="gcard">
+    <div>
+      <div class="eyebrow">תוכנית 3C · 3 חדרים · סיור תלת-ממדי</div>
+      <h2 id="gTitle">ברוכים הבאים לדירה 3C</h2>
+    </div>
+    <p class="lead">הדירה נבנתה מהשרטוט, והחדרים במיקום ובמידות שלו. הריהוט, החומרים והצבעים הם הצעה להמחשה.</p>
+    <div>
+      <p class="gsec">איך מסתובבים</p>
+      <ul class="how">
+        <li><b>להסתכל</b><span><span class="only-desk">גוררים עם העכבר</span><span class="only-touch">גוררים עם האצבע</span> לכל כיוון</span></li>
+        <li><b>ללכת</b><span><span class="only-desk">W A S D או החיצים, Shift למהר</span><span class="only-touch">הג׳ויסטיק בפינה התחתונה</span></span></li>
+        <li><b>עדשה</b><span><span class="only-desk">גלגלת העכבר</span><span class="only-touch">צביטה בשתי אצבעות</span>, מ-12 מ״מ רחבה עד 35 מ״מ טבעית</span></li>
+        <li><b>תוכנית</b><span>לחיצה על המפה הקטנה מעבירה לנקודה בדירה</span></li>
+        <li><b>מבט על</b><span>הדירה מלמעלה בלי תקרה, גוררים כדי לסובב</span></li>
+        <li><b>יום וערב</b><span>אור שמש מהחלונות או תאורת הבית</span></li>
+      </ul>
+    </div>
+    <div>
+      <p class="gsec">החדרים · בחרו מאיפה להתחיל</p>
+      <div class="groom" id="gRooms"></div>
+    </div>
+    <div class="gfoot">
+      <small>אפשר לפתוח את המדריך שוב מכפתור סימן השאלה למעלה.</small>
+      <button class="gstart" id="gStart">להתחיל מהכניסה</button>
+    </div>
   </div>
 </div>
 
@@ -206,9 +303,11 @@ const texFloor=ctex(1024,(g,s)=>{ // 80x80 porcelain, 2x2 tiles per 1.6 m
   const t=s/2;for(let i=0;i<2;i++)for(let j=0;j<2;j++){const k=(R()-.5)*7;g.fillStyle=`rgb(${223+k},${218+k},${210+k})`;g.fillRect(i*t,j*t,t,t);}
   for(let i=0;i<46;i++){const x=R()*s,y=R()*s,r=40+R()*170;const gr=g.createRadialGradient(x,y,0,x,y,r);
     gr.addColorStop(0,R()<.5?'rgba(255,255,255,.05)':'rgba(140,128,110,.045)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r);}
-  speckle(g,s,9000,.09,true);speckle(g,s,5000,.12,false);grid(g,s,2,2,2.4,'#b4ada2');
+  speckle(g,s,7000,.05,true);speckle(g,s,4000,.06,false);grid(g,s,2,2,2.4,'#b4ada2');
 },1.6);
-const texPlaster=ctex(512,(g,s)=>{g.fillStyle='#ffffff';g.fillRect(0,0,s,s);speckle(g,s,7000,.045,true);},1.5);
+const texPlaster=ctex(512,(g,s)=>{g.fillStyle='#ffffff';g.fillRect(0,0,s,s);
+  for(let i=0;i<60;i++){const x=R()*s,y=R()*s,r=30+R()*90;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(120,112,100,.025)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r);}
+  speckle(g,s,2500,.015,true);},1.5);
 const texOak=ctex(1024,(g,s)=>{
   g.fillStyle='#c9a57c';g.fillRect(0,0,s,s);
   for(let y=0;y<s;y+=2){const a=.04+R()*.12,dark=R()<.6;g.strokeStyle=dark?`rgba(96,62,30,${a})`:`rgba(255,236,206,${a*.7})`;
@@ -224,7 +323,11 @@ const texBathTile=ctex(1024,(g,s)=>{ // 60x30 glazed tiles
   speckle(g,s,1800,.05,true);grid(g,s,2,4,3,'#cdc8bf');
 },1.2);
 const texBathFloor=ctex(512,(g,s)=>{const t=s/2;for(let i=0;i<2;i++)for(let j=0;j<2;j++){const k=(R()-.5)*10;g.fillStyle=`rgb(${148+k},${145+k},${139+k})`;g.fillRect(i*t,j*t,t,t);}
-  speckle(g,s,9000,.16,true);speckle(g,s,4000,.12,false);grid(g,s,2,2,2.5,'#6c6863');},0.6);
+  speckle(g,s,6000,.07,true);speckle(g,s,3000,.05,false);grid(g,s,2,2,2.5,'#6c6863');},0.6);
+const texZellige=ctex(1024,(g,s)=>{const cols=8,rows=4,cw=s/cols,rh=s/rows; // 7.5x15 cm tiles, 60 cm per texture
+  for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const k=(R()-.5)*18;g.fillStyle=`rgb(${44+k*.6|0},${78+k|0},${68+k*.8|0})`;g.fillRect(i*cw,j*rh,cw,rh);
+    const gr=g.createLinearGradient(i*cw,j*rh,i*cw+cw,j*rh+rh);gr.addColorStop(0,'rgba(255,255,255,.07)');gr.addColorStop(1,'rgba(0,0,0,.08)');g.fillStyle=gr;g.fillRect(i*cw,j*rh,cw,rh);}
+  grid(g,s,cols,rows,3,'#d9d3c6');},0.6);
 const texDeck=ctex(1024,(g,s)=>{const n=10,ph=s/n;for(let i=0;i<n;i++){const k=(R()-.5)*22;g.fillStyle=`rgb(${126+k},${97+k},${70+k})`;g.fillRect(0,i*ph,s,ph);
   for(let l=0;l<34;l++){g.fillStyle=`rgba(60,40,20,${R()*.13})`;g.fillRect(0,i*ph+R()*ph,s,1);}g.fillStyle='#382b22';g.fillRect(0,i*ph,s,3);}},1.2);
 const texRugA=ctex(1024,(g,s)=>{g.fillStyle='#d9d1c2';g.fillRect(0,0,s,s);speckle(g,s,32000,.1,true);speckle(g,s,16000,.1,false);
@@ -284,6 +387,8 @@ const mOvenGlass=M({color:'#101113',roughness:.07,metalness:.3});
 const mCook=M({color:'#0c0d0f',roughness:.05});
 const mRing=M({color:'#4a4a4a',roughness:.4});
 const mBathTile=M({map:texBathTile,roughness:.12});
+const mZellige=M({map:texZellige,roughness:.14});
+const mBrass=M({color:'#b08a52',metalness:.9,roughness:.3});
 const mBathFloor=M({map:texBathFloor,roughness:.45});
 const mDeck=M({map:texDeck,roughness:.75});
 const mConcrete=M({color:'#aaa7a1',roughness:.9});
@@ -355,8 +460,8 @@ B(-25,-30,-25,1425,-1,535,mConcrete,{cast:false});
 B(0,-1,0,1400,0,510,mFloor,{cast:false});
 B(552,0,106,754,.4,194,mBathFloor,{cast:false});
 B(1126,0,0,1400,.4,165,mBathFloor,{cast:false});
-B(1300,0,177,1400,.4,290,mBathFloor,{cast:false});
-B(1300,0,302,1400,.4,510,mConcrete,{cast:false});
+B(1270,0,177,1400,.4,290,mBathFloor,{cast:false});
+B(1270,0,302,1400,.4,510,mConcrete,{cast:false});
 // thresholds
 B(30,-1,510,340,0,535,mQuartz,{cast:false});B(300,-1,-25,400,0,0,mQuartz,{cast:false});
 // ceiling
@@ -364,7 +469,7 @@ B(-25,270,-25,1425,290,535,mCeil,{tag:'ceil'});
 
 // exterior walls (25 cm)
 wall('x',-12.5,25,-25,1425,[{a:300,b:400,bottom:0,top:215}],{inner:1});
-wall('x',522.5,25,-25,1425,[{a:30,b:340,bottom:0,top:230},{a:390,b:480,bottom:105,top:220},{a:690,b:840,bottom:90,top:225},{a:1110,b:1200,bottom:90,top:210},{a:1310,b:1395,bottom:0,top:240}],{inner:-1});
+wall('x',522.5,25,-25,1425,[{a:30,b:340,bottom:0,top:230},{a:390,b:480,bottom:105,top:220},{a:690,b:840,bottom:90,top:225},{a:1110,b:1200,bottom:90,top:210},{a:1280,b:1395,bottom:0,top:240}],{inner:-1});
 wall('z',-12.5,25,0,510,[],{inner:1});
 wall('z',1412.5,25,0,510,[{a:40,b:110,bottom:150,top:215}],{inner:-1});
 // interior walls
@@ -374,22 +479,22 @@ wall('x',200,12,552,766);
 wall('z',760,12,106,194);
 wall('z',996,12,94,176);
 wall('z',1005,30,170,510);                                   // mamad (reinforced)
-wall('x',185,30,990,1300,[{a:1025,b:1105,bottom:0,top:205}]);
-wall('x',171,12,1114,1400,[{a:1310,b:1380,bottom:0,top:210}]);
+wall('x',185,30,990,1270,[{a:1025,b:1105,bottom:0,top:205}]);
+wall('x',171,12,1114,1400,[{a:1272,b:1332,bottom:0,top:210}]);
 wall('z',1120,12,0,165,[{a:15,b:90,bottom:0,top:210}]);
-wall('z',1285,30,170,510);
-wall('x',296,12,1300,1400,[{a:1320,b:1390,bottom:0,top:210}]);
+wall('z',1255,30,170,510);
+wall('x',296,12,1270,1400,[{a:1282,b:1342,bottom:0,top:210}]);
 
 // door casings + leaves
 casing('x',100,12,670,740,210);casing('x',100,12,800,890,210);
 casing('x',185,30,1025,1105,205);casing('z',1120,12,15,90,210,[-1]);
-casing('x',171,12,1310,1380,210,[1]);casing('x',296,12,1320,1390,210);
+casing('x',171,12,1272,1332,210,[1]);casing('x',296,12,1282,1342,210);
 leaf(738,106,68,-Math.PI/2+.12,mWhite);
 leaf(888,106,86,-Math.PI/2+.25,mWhite);
 leaf(1027,170,78,Math.PI/2+.3,mSteelDoor,6,203);
 leaf(1126,88,73,.15,mWhite);
-leaf(1378,177,68,-Math.PI/2+.1,mWhite);
-leaf(1388,302,68,-Math.PI/2+.1,mWhite);
+leaf(1274,177,56,-Math.PI/2,mWhite);
+leaf(1340,302,56,-Math.PI/2+.08,mWhite);
 // entrance door (closed)
 B(301,0,-9,399,213,-4,mEntry);col(300,-25,400,0);
 B(378,98,-4,392,100,-1.5,mChrome);B(382,95,-3,388,104,-1,mChrome);
@@ -405,7 +510,7 @@ windowUnit('z',1412.5,25,40,110,150,215,-1);
   BA('x',a,0,c-4,a+4.5,top,c+4,mAlu);BA('x',b-4.5,0,c-4,b,top,c+4,mAlu);BA('x',a,top-4.5,c-4,b,top,c+4,mAlu);BA('x',a,0,c-4,b,1.5,c+4,mAlu,{cast:false});
   sash('x',a+4.5,190,1.5,top-4.5,c+2.2);sash('x',a+12,198,1.5,top-4.5,c-2.2);col(30,515,200,530);})();
 // laundry screen louvers
-(function(){BA('x',1310,0,516,1395,3,529,mAlu);for(let y=10;y<236;y+=9){const m=new THREE.Mesh(new THREE.BoxGeometry(.85,.012,.075),mAlu);m.position.set(13.525,y*S,5.225);m.rotation.x=.6;m.castShadow=true;scene.add(m);}col(1310,512,1395,532);})();
+(function(){BA('x',1280,0,516,1395,3,529,mAlu);for(let y=10;y<236;y+=9){const m=new THREE.Mesh(new THREE.BoxGeometry(1.15,.012,.075),mAlu);m.position.set(13.375,y*S,5.225);m.rotation.x=.6;m.castShadow=true;scene.add(m);}col(1280,512,1395,532);})();
 
 /* ---------- kitchen ---------- */
 B(485,0,188,540,10,510,mDark,{cast:false});B(380,0,455,485,10,510,mDark,{cast:false});
@@ -476,10 +581,18 @@ function plant(x,z,potR,potH,ht,seed,mat){const r=rng(seed);Cy(x,z,0,potH,potR,m
     m.position.set((x+Math.cos(a)*rad)*S,y*S,(z+Math.sin(a)*rad)*S);m.rotation.set(r()*.8-.4,a,r()*.6-.3);m.castShadow=true;scene.add(m);}}
 plant(25,485,17,42,150,3);plant(25,25,14,36,110,8);
 
-/* ---------- guest WC ---------- */
-B(552,0,192,660,120,194,mBathTile,{cast:false});
-B(585,32,145,615,42,192,mCeramic,{r:5,col:true});B(586,42,146,614,44,190,mCeramic,{r:1.5});B(593,95,191.2,607,105,192,mChrome,{cast:false});
-B(725,80,125,754,88,165,mCeramic,{r:2});B(741,88,143,745,98,147,mChrome);B(752.8,105,128,754,165,162,mMirror,{cast:false});
+/* ---------- guest WC: green zellige feature wall, oak shelf basin, round mirror ---------- */
+B(552,0,192,754,270,194,mZellige,{cast:false});                                   // full-height wall behind toilet
+B(552,0,106,554.5,120,192,mZellige,{cast:false});B(751.5,0,106,754,120,192,mZellige,{cast:false});
+B(554.5,0,106,662,120,108,mZellige,{cast:false});B(748,0,106,751.5,120,108,mZellige,{cast:false});
+B(552,120,106,556,123,192,mOak,{cast:false});B(748,120,106,754,123,192,mOak,{cast:false});B(554,120,106,662,123,110,mOak,{cast:false});
+B(630,32,145,660,42,192,mCeramic,{r:5,col:true});B(631,42,146,659,44,190,mCeramic,{r:1.5});B(638,95,191.2,652,105,192,mBlack,{cast:false});
+B(554.5,76,112,588,80,170,mOak,{col:true});Cy(572,141,80,93,13,mCeramic,{rt:15,seg:36});Cy(572,141,92.6,93,11,mSteelDark,{cast:false});
+B(554.5,100,139,562,102,143,mBlack);B(560,97,140,563,102,142,mBlack);
+(function(){const fr=new THREE.Mesh(new THREE.TorusGeometry(.215,.012,10,48),mBrass);fr.position.set(5.555,1.45,1.41);fr.rotation.y=Math.PI/2;scene.add(fr);
+  const mi=new THREE.Mesh(new THREE.CircleGeometry(.21,48),mMirror);mi.position.set(5.552,1.45,1.41);mi.rotation.y=Math.PI/2;scene.add(mi);})();
+Cy(605,128,180,270,.4,mBlack,{cast:false});Cy(605,128,170,182,6,mShade,{cast:false,seg:24});
+B(684,68,186,688,72,192,mBlack);Cy(686,182,62,74,5.5,mLinen,{cast:false});                    // paper holder
 
 /* ---------- master bedroom ---------- */
 B(700,0,250,960,.8,470,mRugB,{uv:false,cast:false});
@@ -496,8 +609,8 @@ B(552,250,222,612,270,505,mWhite,{cast:false});
 
 /* ---------- mamad / bedroom 2 ---------- */
 B(1040,0,260,1170,.8,420,mRugA,{uv:false,cast:false});
-B(1180,0,205,1270,30,405,mOak,{col:true});B(1180,30,200,1270,95,207,mHead,{r:2.5});
-B(1183,30,207,1267,50,402,mLinen,{r:4});B(1181,46,250,1269,56,404,mThrow,{r:4});B(1195,49,212,1255,62,245,mLinen,{r:5});
+B(1150,0,205,1240,30,405,mOak,{col:true});B(1150,30,200,1240,95,207,mHead,{r:2.5});
+B(1153,30,207,1237,50,402,mLinen,{r:4});B(1151,46,250,1239,56,404,mThrow,{r:4});B(1165,49,212,1225,62,245,mLinen,{r:5});
 B(1030,72,452,1170,75,508,mOak,{col:true});for(const [lx,lz] of [[1034,456],[1163,456],[1034,503],[1163,503]])B(lx,0,lz,lx+3,72,lz+3,mBlack);
 B(1080,75,480,1118,76,498,mDark);B(1081,76,497,1117,100,498.8,mScreen);   // laptop
 Cy(1150,490,75,77,7,mBlack);Cy(1150,490,77,110,.9,mBlack);Cy(1145,485,104,116,7,mShade,{rt:5,open:true,cast:false});
@@ -511,7 +624,7 @@ col(1020,230,1048,380,true);
 /* ---------- bathroom ---------- */
 B(1126,0,0,1400,220,2,mBathTile,{cast:false});
 B(1398,0,0,1400,220,40,mBathTile,{cast:false});B(1398,0,40,1400,150,110,mBathTile,{cast:false});B(1398,0,110,1400,220,165,mBathTile,{cast:false});
-B(1126,0,163,1310,220,165,mBathTile,{cast:false});B(1380,0,163,1400,220,165,mBathTile,{cast:false});B(1310,210,163,1380,220,165,mBathTile,{cast:false});
+B(1126,0,163,1272,220,165,mBathTile,{cast:false});B(1332,0,163,1400,220,165,mBathTile,{cast:false});B(1272,210,163,1332,220,165,mBathTile,{cast:false});
 B(1126,0,0,1128,220,15,mBathTile,{cast:false});B(1126,0,90,1128,220,165,mBathTile,{cast:false});B(1126,210,15,1128,220,90,mBathTile,{cast:false});
 B(1140,50,2,1230,80,48,mOak,{col:true});B(1138,80,2,1232,85,50,mCeramic,{r:1});B(1160,85.01,10,1210,85.2,40,mSteelDark,{cast:false});
 B(1183,92,2,1187,95,14,mChrome);B(1145,105,2,1225,185,3,mMirror,{cast:false});
@@ -523,11 +636,11 @@ B(1380,185,40,1398,187,42,mChrome);Cy(1380,41,180,182,9,mChrome);
 B(1170,140,163,1210,141,165,mChrome);B(1172,100,159,1208,141,163,mLinen,{r:1});   // towel on rail
 
 /* ---------- laundry + laundry screen ---------- */
-B(1310,0,228,1370,85,288,mApp,{col:true});B(1310,85,228,1370,170,288,mApp);
-for(const y of [42,128]){const m=Cy(1340,227.5,y-1,y+1,16,mOvenGlass,{cast:false});m.rotation.x=Math.PI/2;m.position.set(13.4,y*S,2.275);}
-B(1300,190,250,1400,192,290,mWhite);
+B(1338,0,205,1398,85,265,mApp,{col:true});B(1338,85,205,1398,170,265,mApp);B(1337.6,72,210,1338,80,260,mDark,{cast:false});
+for(const y of [42,128]){const m=Cy(1337,235,y-1,y+1,16,mOvenGlass,{cast:false});m.rotation.z=Math.PI/2;m.position.set(13.375,y*S,2.35);}
+B(1338,192,180,1400,195,290,mWhite);Cy(1360,235,195,215,9,mLinen);B(1375,195,262,1395,212,284,bookMats[2]);
 B(1315,0,455,1395,66,500,mApp,{col:true});(function(){const m=Cy(1355,454.5,32,34,22,mDark,{cast:false});m.rotation.x=Math.PI/2;m.position.set(13.55,.33,4.545);})();
-for(const z of [330,360,390,420]){const m=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,1,6),mDark);m.rotation.z=Math.PI/2;m.position.set(13.5,1.8,z*S);scene.add(m);}
+for(const z of [330,360,390,420]){const m=new THREE.Mesh(new THREE.CylinderGeometry(.003,.003,1,6),mDark);m.rotation.z=Math.PI/2;m.scale.y=1.28;m.position.set(13.35,1.8,z*S);scene.add(m);}
 
 /* ---------- balcony ---------- */
 B(-25,-30,535,400,-2,800,mConcrete,{cast:false});B(0,-2,535,400,0,795,mDeck,{cast:false});
@@ -544,10 +657,10 @@ plant(370,560,16,40,120,21);
 /* ---------- ceiling lights ---------- */
 const lights=[];
 function spot(x,z){const m=Cy(x,z,268.6,270,5.5,mSpot,{cast:false,seg:24});tagged.ceil.push(m);}
-function pl(x,y,z,int,col){const l=new THREE.PointLight(col||'#ffd7a6',0,0,2);l.position.set(x*S,y*S,z*S);l.userData.on=int;scene.add(l);lights.push(l);}
-[[120,280],[120,400],[200,280],[200,400],[430,230],[430,360],[640,50],[840,50],[1050,50],[1050,135],[650,150],[700,300],[700,440],[880,160],[1145,300],[1145,430],[1200,80],[1310,80],[1350,230],[200,670],[1350,400]].forEach(p=>spot(p[0],p[1]));
-pl(170,240,340,70);pl(160,150,130,35);pl(430,240,300,45);pl(820,240,50,25);pl(650,230,150,14);
-pl(760,240,350,45);pl(966,85,242,10);pl(966,85,478,10);pl(1145,240,360,40);pl(1260,230,80,32);pl(200,250,670,22);pl(250,150,212,16);
+function pl(x,y,z,int,day){const l=new THREE.PointLight('#ffd7a6',0,0,2);l.position.set(x*S,y*S,z*S);l.userData.on=int;l.userData.day=day||0;scene.add(l);lights.push(l);}
+[[120,280],[120,400],[200,280],[200,400],[430,230],[430,360],[640,50],[840,50],[1050,50],[1050,135],[690,150],[700,300],[700,440],[880,160],[1145,300],[1145,430],[1200,80],[1310,80],[1325,232],[200,670],[1340,400]].forEach(p=>spot(p[0],p[1]));
+pl(170,240,340,26);pl(160,150,130,12);pl(430,240,300,16);pl(820,240,50,9,7);pl(605,165,130,7,6);
+pl(760,240,350,16);pl(966,85,242,3.5);pl(966,85,478,3.5);pl(1145,240,360,14);pl(1260,230,80,11,9);pl(200,250,670,8);pl(250,150,212,5);
 
 /* ---------- surroundings ---------- */
 B(-1500,-1230,-800,2900,-30,535,mFacade,{cast:false,recv:false});
@@ -583,49 +696,70 @@ const hemi=new THREE.HemisphereLight('#dde8f1','#b5a48c',.35);scene.add(hemi);
 function applyTime(ev){
   state.evening=ev;sun.intensity=ev?0:3.2;sun.castShadow=!ev;hemi.intensity=ev?.03:.35;
   const k=ev?.07:.55;allMats.forEach(m=>{m.envMapIntensity=m.userData.env*k;});
-  lights.forEach(l=>{l.intensity=ev?l.userData.on:0;});
-  mSpot.emissiveIntensity=ev?7:.15;mLED.emissiveIntensity=ev?5:.2;mShade.emissiveIntensity=ev?1.4:0;mFacade.emissiveIntensity=ev?1.3:0;
+  lights.forEach(l=>{l.intensity=ev?l.userData.on:l.userData.day;});
+  mSpot.emissiveIntensity=ev?2.2:.15;mLED.emissiveIntensity=ev?1.6:.2;mShade.emissiveIntensity=ev?.55:0;mFacade.emissiveIntensity=ev?1.3:0;
   if(ev){skyU.top.value.set('#141b33');skyU.hor.value.set('#b97f63');skyU.bot.value.set('#24252b');scene.fog.color.set('#3a3840');}
   else{skyU.top.value.set('#5f93c7');skyU.hor.value.set('#dce7ee');skyU.bot.value.set('#c8ccc4');scene.fog.color.set('#dfe6ea');}
-  renderer.toneMappingExposure=ev?1.3:1.0;
+  renderer.toneMappingExposure=ev?.9:1.0;
   bDay.setAttribute('aria-pressed',String(!ev));bEve.setAttribute('aria-pressed',String(ev));}
 
 /* ================= rooms + navigation ================= */
 const ROOMS=[
-  {k:'wc',n:'שירותי אורחים',d:'196 × 100',r:[[552,106,754,194]],s:[712,150,600,175]},
-  {k:'bath',n:'חדר רחצה',d:'344 × 165',r:[[1126,0,1400,165]],s:[1165,120,1360,40]},
-  {k:'laundry',n:'חדר שירות',d:'160',r:[[1300,177,1400,290]],s:[1345,200,1345,290]},
-  {k:'mistor',n:'מסתור כביסה',d:'',r:[[1300,302,1400,510]],s:[1350,330,1350,480]},
-  {k:'mamad',n:'ממ״ד · חדר שינה 2',d:'280 × 312',r:[[1020,200,1270,510]],s:[1085,240,1220,470]},
-  {k:'master',n:'חדר שינה הורים',d:'375 × 285',r:[[552,206,990,510],[766,106,990,206]],s:[655,478,950,300]},
-  {k:'kitchen',n:'מטבח',d:'עומק 400',r:[[380,100,546,510]],s:[400,255,520,420]},
-  {k:'hall',n:'מסדרון',d:'',r:[[552,0,1114,100],[1002,100,1114,170]],s:[595,50,1110,60]},
-  {k:'living',n:'סלון ופינת אוכל',d:'548 × 510',r:[[0,0,546,510]],s:[470,60,120,420]},
-  {k:'balcony',n:'מרפסת מקורה',d:'379 × 257',r:[[0,535,400,800]],s:[330,565,60,780]}];
+  {k:'wc',n:'שירותי אורחים',d:'196 × 100',r:[[552,106,754,194]],s:[704,72,628,192,-.2]},
+  {k:'bath',n:'חדר רחצה',d:'344 × 165',r:[[1126,0,1400,165]],s:[1150,135,1372,55,-.14]},
+  {k:'laundry',n:'חדר שירות',d:'160',r:[[1270,177,1400,290]],s:[1288,282,1372,205,-.16]},
+  {k:'mistor',n:'מסתור כביסה',d:'',r:[[1270,302,1400,510]],s:[1298,326,1360,490,-.12]},
+  {k:'mamad',n:'ממ״ד · חדר שינה 2',d:'280 × 312',r:[[1020,200,1240,510]],s:[1072,236,1200,470,-.14]},
+  {k:'master',n:'חדר שינה הורים',d:'375 × 285',r:[[552,206,990,510],[766,106,990,206]],s:[650,482,960,310,-.1]},
+  {k:'kitchen',n:'מטבח',d:'עומק 400',r:[[380,100,546,510]],s:[335,165,505,430,-.13]},
+  {k:'hall',n:'מסדרון',d:'',r:[[552,0,1114,100],[1002,100,1114,170]],s:[590,50,1112,55,-.04]},
+  {k:'living',n:'סלון ופינת אוכל',d:'548 × 510',r:[[0,0,546,510]],s:[95,475,420,150,-.08]},
+  {k:'balcony',n:'מרפסת מקורה',d:'379 × 257',r:[[0,535,400,800]],s:[340,568,70,790,-.06]}];
+const START=[350,45,165,430,-.07];
 const NAV=['living','kitchen','hall','master','mamad','bath','wc','laundry','balcony'];
 
 const state={mode:'walk',x:3.5,z:.45,yaw:0,pitch:-.05,evening:false,room:null,moved:false,
   orb:{theta:.35,phi:.78,r:15.5},tx:7,tz:3.7};
 function lookAtYaw(x,z,tx,tz){return Math.atan2(-(tx-x),-(tz-z));}
-state.yaw=lookAtYaw(350,45,150,420);
+state.yaw=lookAtYaw(START[0],START[1],START[2],START[3]);state.pitch=START[4];
 
 function blocked(x,z){const r=.22;for(const c of colliders)if(x>c[0]-r&&x<c[2]+r&&z>c[1]-r&&z<c[3]+r)return true;return false;}
 function roomAt(xcm,zcm){for(const rm of ROOMS)for(const q of rm.r)if(xcm>=q[0]&&xcm<=q[2]&&zcm>=q[1]&&zcm<=q[3])return rm;return null;}
-function go(rm){const s=rm.s;state.x=s[0]*S;state.z=s[1]*S;state.yaw=lookAtYaw(s[0],s[1],s[2],s[3]);state.pitch=-.06;setMode('walk');}
+function fmtDims(d){return d?d.replace(/(\d+ × \d+)/,'<bdi dir="ltr">$1</bdi>')+(/\d/.test(d)?' ס״מ':''):'';}
+function go(rm){const s=rm.s;state.x=s[0]*S;state.z=s[1]*S;state.yaw=lookAtYaw(s[0],s[1],s[2],s[3]);state.pitch=s[4]!==undefined?s[4]:-.06;setMode('walk');}
 
 /* ---------- UI ---------- */
 const bWalk=document.getElementById('bWalk'),bTop=document.getElementById('bTop'),bDay=document.getElementById('bDay'),bEve=document.getElementById('bEve');
 const roomName=document.getElementById('roomName'),roomDims=document.getElementById('roomDims'),hint=document.getElementById('hint');
 const nav=document.getElementById('rooms');const navBtns={};
 NAV.forEach(k=>{const rm=ROOMS.find(r=>r.k===k);const b=document.createElement('button');b.textContent=rm.n;b.id='go-'+k;b.addEventListener('click',()=>go(rm));nav.appendChild(b);navBtns[k]=b;});
-if(coarse)hint.textContent='גררו להסתכל · ג׳ויסטיק ללכת';
-setTimeout(()=>hint.classList.add('gone'),6000);
+// rooms bar: arrows + edge fades appear only on the side that has more rooms
+const rLeft=document.getElementById('rLeft'),rRight=document.getElementById('rRight');
+function roomsEdges(){const max=nav.scrollWidth-nav.clientWidth;if(max<=2){rLeft.hidden=rRight.hidden=true;nav.style.setProperty('--fl','0px');nav.style.setProperty('--fr','0px');return;}
+  // RTL: scrollLeft is 0 at the right edge and goes negative toward the left
+  const pos=Math.abs(nav.scrollLeft),moreRight=pos>2,moreLeft=pos<max-2;
+  rLeft.hidden=!moreLeft;rRight.hidden=!moreRight;nav.style.setProperty('--fl',moreLeft?'44px':'0px');nav.style.setProperty('--fr',moreRight?'44px':'0px');}
+nav.addEventListener('scroll',roomsEdges,{passive:true});addEventListener('resize',roomsEdges);
+rLeft.addEventListener('click',()=>nav.scrollBy({left:-nav.clientWidth*.7}));
+rRight.addEventListener('click',()=>nav.scrollBy({left:nav.clientWidth*.7}));
+function nudgeRooms(){roomsEdges();const a=!rLeft.hidden?rLeft:!rRight.hidden?rRight:null;if(!a)return;a.classList.remove('pulse');void a.offsetWidth;a.classList.add('pulse');
+  if(!matchMedia('(prefers-reduced-motion:reduce)').matches){const d=a===rLeft?-36:36;nav.scrollBy({left:d});setTimeout(()=>nav.scrollBy({left:-d}),420);}}
 const uiRoot=document.querySelector('.ui'),panel=document.getElementById('panel'),bPanel=document.getElementById('bPanel'),bMap=document.getElementById('bMap');
 function openPanel(o){panel.classList.toggle('open',o);bPanel.setAttribute('aria-expanded',String(o));}
 bPanel.addEventListener('click',()=>openPanel(!panel.classList.contains('open')));
 bMap.addEventListener('click',()=>{const o=!uiRoot.classList.contains('map-on');uiRoot.classList.toggle('map-on',o);bMap.setAttribute('aria-pressed',String(o));buildMap();});
 canvas.addEventListener('pointerdown',()=>openPanel(false));
-addEventListener('keydown',e=>{if(e.code==='Escape')openPanel(false);});
+// guide: shown on every launch
+const guide=document.getElementById('guide'),gRooms=document.getElementById('gRooms'),gStart=document.getElementById('gStart');
+['living','kitchen','hall','wc','master','mamad','bath','laundry','mistor','balcony'].forEach(k=>{const rm=ROOMS.find(r=>r.k===k);
+  const b=document.createElement('button');b.innerHTML='<b></b><span></span>';b.firstChild.textContent=rm.n;b.lastChild.innerHTML=fmtDims(rm.d);
+  b.addEventListener('click',()=>{go(rm);closeGuide();});gRooms.appendChild(b);});
+function closeGuide(){guide.hidden=true;canvas.focus({preventScroll:true});setTimeout(nudgeRooms,350);}
+function openGuide(){openPanel(false);guide.hidden=false;gStart.focus({preventScroll:true});}
+gStart.addEventListener('click',()=>{go({s:START});closeGuide();});
+guide.addEventListener('click',e=>{if(e.target===guide)closeGuide();});
+document.getElementById('bHelp').addEventListener('click',openGuide);
+addEventListener('keydown',e=>{if(e.code==='Escape'){openPanel(false);if(!guide.hidden)closeGuide();}});
 const lensIn=document.getElementById('lens'),lensVal=document.getElementById('lensVal');
 state.focal=16;try{const f=+localStorage.getItem('lens3c');if(f>=12&&f<=35)state.focal=f;}catch(e){}
 // focal length is full-frame equivalent; it sets the field of view across the screen's shorter side (24 mm sensor side)
@@ -668,7 +802,7 @@ new MutationObserver(buildMap).observe(document.documentElement,{attributes:true
 
 /* input */
 const keys=new Set();
-addEventListener('keydown',e=>{if(e.target.tagName==='BUTTON'&&(e.code==='Space'||e.code==='Enter'))return;keys.add(e.code);if(/^(Arrow|Key[WASD])/.test(e.code)){e.preventDefault();hideHint();}});
+addEventListener('keydown',e=>{if(!guide.hidden)return;if(e.target.tagName==='BUTTON'&&(e.code==='Space'||e.code==='Enter'))return;keys.add(e.code);if(/^(Arrow|Key[WASD])/.test(e.code)){e.preventDefault();hideHint();}});
 addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',()=>keys.clear());
 const ptrs=new Map();let pinch0=0;
 canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});canvas.focus({preventScroll:true});
@@ -707,11 +841,13 @@ function tick(){const dt=Math.min(.05,clock.getDelta());
     camera.position.set(state.x,1.62+(moving?Math.sin(bobT)*.012:0),state.z);camera.rotation.set(state.pitch,state.yaw,0);
   }else{const o=state.orb;camera.position.set(state.tx+o.r*Math.sin(o.phi)*Math.sin(o.theta),o.r*Math.cos(o.phi),state.tz+o.r*Math.sin(o.phi)*Math.cos(o.theta));camera.lookAt(state.tx,0,state.tz);}
   const rm=roomAt(state.x*100,state.z*100);
-  if(rm!==state.room){state.room=rm;roomName.textContent=rm?rm.n:'כניסה';roomName.title=roomName.textContent;roomDims.innerHTML=rm&&rm.d?rm.d.replace(/(\d+ × \d+)/,'<bdi dir="ltr">$1</bdi>')+(/\d/.test(rm.d)?' ס״מ':''):'';
-    Object.entries(navBtns).forEach(([k,b])=>b.setAttribute('aria-current',String(!!rm&&rm.k===k)));}
+  if(rm!==state.room){state.room=rm;roomName.textContent=rm?rm.n:'כניסה';roomName.title=roomName.textContent;roomDims.innerHTML=rm?fmtDims(rm.d):'';
+    Object.entries(navBtns).forEach(([k,b])=>b.setAttribute('aria-current',String(!!rm&&rm.k===k)));
+    if(rm&&navBtns[rm.k]){const b=navBtns[rm.k],nb=nav.getBoundingClientRect(),bb=b.getBoundingClientRect();
+      if(bb.left<nb.left+40||bb.right>nb.right-40)nav.scrollBy({left:(bb.left+bb.width/2)-(nb.left+nb.width/2)});}}
   drawMap();renderer.render(scene,camera);requestAnimationFrame(tick);}
 
-setFocal(state.focal);resize();applyTime(false);
+setFocal(state.focal);resize();applyTime(false);roomsEdges();gStart.focus({preventScroll:true});
 requestAnimationFrame(()=>{tick();loading.remove();});
 })();
 </script>
