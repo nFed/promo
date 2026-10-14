@@ -73,12 +73,45 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
 .lens .ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 @media (pointer:coarse){.joy{display:block}}
 #loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);color:var(--muted);font:500 15px var(--f-ui);z-index:5}
-@media (max-width:560px){
-  h1{font-size:21px;margin-bottom:6px}
-  .top-r{min-width:0;padding:10px 12px}
-  #map{width:170px}
-  .seg button{padding:6px 9px;min-width:48px}
-  .lens{width:150px}
+/* desktop defaults for the mobile-only pieces */
+.mbar{display:none}
+.tag{display:none}
+.top-l{direction:ltr}
+.panel{display:flex;flex-direction:column;gap:8px;align-items:flex-start;direction:rtl}
+.iconbtn{width:40px;height:40px;display:grid;place-items:center;color:var(--ink);cursor:pointer;padding:0}
+.iconbtn[aria-expanded="true"],.iconbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.iconbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.iconbtn svg{width:20px;height:20px}
+.hint.gone{pointer-events:none}
+
+/* phones: one slim top band, controls tucked into a sheet, plan on demand */
+@media (max-width:640px),(max-height:500px){
+  .top-r{min-width:0;padding:0 12px;height:40px;display:flex;align-items:center;border-radius:20px;max-width:calc(100vw - 140px)}
+  .top-r .eyebrow,.top-r h1{display:none}
+  .room{border:0;padding:0;gap:6px;flex-wrap:nowrap;min-width:0}
+  #roomName{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .room .dims{font-size:11px;white-space:nowrap}
+  .tag{display:inline;font:700 13px var(--f-display);color:var(--accent)}
+  .mbar{display:flex;gap:8px}
+  .iconbtn{border-radius:20px}
+  .top-l{gap:8px}
+  .panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;gap:6px;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.18);pointer-events:auto}
+  .panel.open{display:flex}
+  .panel .card{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .panel .seg{padding:0}
+  .seg button{padding:7px 10px;min-width:56px}
+  .lens{width:200px;padding:4px 2px 2px}
+  .bottom{gap:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+  .map{display:none;padding:6px}
+  .map-on .map{display:block}
+  .maplabel{display:none}
+  #map{width:min(190px,48vw)}
+  .rooms{padding:4px;gap:2px;border-radius:12px}
+  .rooms button{font-size:12.5px;padding:6px 9px}
+  .hint{font-size:12px;padding:6px 12px}
+  .joy{width:100px;height:100px;margin-inline-start:auto;opacity:.85}
+  .joy .knob{width:40px;height:40px;margin:-20px 0 0 -20px}
 }
 @media (prefers-reduced-motion:reduce){.hint{transition:none}}
 </style>
@@ -90,21 +123,31 @@ h1{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.1;m
   <div class="card top-r">
     <div class="eyebrow">תוכנית 3C · 3 חדרים</div>
     <h1>דירה 3C</h1>
-    <div class="room"><span id="roomName">כניסה</span><span id="roomDims" class="dims"></span></div>
+    <div class="room"><span class="tag">3C</span><span id="roomName">כניסה</span><span id="roomDims" class="dims"></span></div>
   </div>
   <div class="top-l">
-    <div class="card seg" role="group" aria-label="תצוגה">
-      <button id="bWalk" aria-pressed="true">סיור</button>
-      <button id="bTop" aria-pressed="false">מבט על</button>
+    <div class="mbar">
+      <button class="card iconbtn" id="bPanel" aria-expanded="false" aria-controls="panel" aria-label="תצוגה, תאורה ועדשה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+      <button class="card iconbtn" id="bMap" aria-pressed="false" aria-label="תוכנית הדירה">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>
+      </button>
     </div>
-    <div class="card seg" role="group" aria-label="תאורה">
-      <button id="bDay" aria-pressed="true">יום</button>
-      <button id="bEve" aria-pressed="false">ערב</button>
-    </div>
-    <div class="card lens">
-      <label for="lens">עדשה <output id="lensVal" for="lens">16 מ״מ</output></label>
-      <input type="range" id="lens" min="12" max="35" step="1" value="16">
-      <div class="ends"><span>רחבה</span><span>צרה</span></div>
+    <div class="panel" id="panel">
+      <div class="card seg" role="group" aria-label="תצוגה">
+        <button id="bWalk" aria-pressed="true">סיור</button>
+        <button id="bTop" aria-pressed="false">מבט על</button>
+      </div>
+      <div class="card seg" role="group" aria-label="תאורה">
+        <button id="bDay" aria-pressed="true">יום</button>
+        <button id="bEve" aria-pressed="false">ערב</button>
+      </div>
+      <div class="card lens">
+        <label for="lens">עדשה <output id="lensVal" for="lens">16 מ״מ</output></label>
+        <input type="range" id="lens" min="12" max="35" step="1" value="16">
+        <div class="ends"><span>רחבה</span><span>צרה</span></div>
+      </div>
     </div>
   </div>
   <div class="bottom">
@@ -575,7 +618,14 @@ const bWalk=document.getElementById('bWalk'),bTop=document.getElementById('bTop'
 const roomName=document.getElementById('roomName'),roomDims=document.getElementById('roomDims'),hint=document.getElementById('hint');
 const nav=document.getElementById('rooms');const navBtns={};
 NAV.forEach(k=>{const rm=ROOMS.find(r=>r.k===k);const b=document.createElement('button');b.textContent=rm.n;b.id='go-'+k;b.addEventListener('click',()=>go(rm));nav.appendChild(b);navBtns[k]=b;});
-if(coarse)hint.textContent='גררו כדי להסתכל · הג׳ויסטיק להליכה · או בחרו חדר';
+if(coarse)hint.textContent='גררו להסתכל · ג׳ויסטיק ללכת';
+setTimeout(()=>hint.classList.add('gone'),6000);
+const uiRoot=document.querySelector('.ui'),panel=document.getElementById('panel'),bPanel=document.getElementById('bPanel'),bMap=document.getElementById('bMap');
+function openPanel(o){panel.classList.toggle('open',o);bPanel.setAttribute('aria-expanded',String(o));}
+bPanel.addEventListener('click',()=>openPanel(!panel.classList.contains('open')));
+bMap.addEventListener('click',()=>{const o=!uiRoot.classList.contains('map-on');uiRoot.classList.toggle('map-on',o);bMap.setAttribute('aria-pressed',String(o));buildMap();});
+canvas.addEventListener('pointerdown',()=>openPanel(false));
+addEventListener('keydown',e=>{if(e.code==='Escape')openPanel(false);});
 const lensIn=document.getElementById('lens'),lensVal=document.getElementById('lensVal');
 state.focal=16;try{const f=+localStorage.getItem('lens3c');if(f>=12&&f<=35)state.focal=f;}catch(e){}
 // focal length is full-frame equivalent; it sets the field of view across the screen's shorter side (24 mm sensor side)
@@ -657,7 +707,7 @@ function tick(){const dt=Math.min(.05,clock.getDelta());
     camera.position.set(state.x,1.62+(moving?Math.sin(bobT)*.012:0),state.z);camera.rotation.set(state.pitch,state.yaw,0);
   }else{const o=state.orb;camera.position.set(state.tx+o.r*Math.sin(o.phi)*Math.sin(o.theta),o.r*Math.cos(o.phi),state.tz+o.r*Math.sin(o.phi)*Math.cos(o.theta));camera.lookAt(state.tx,0,state.tz);}
   const rm=roomAt(state.x*100,state.z*100);
-  if(rm!==state.room){state.room=rm;roomName.textContent=rm?rm.n:'כניסה';roomDims.innerHTML=rm&&rm.d?rm.d.replace(/(\d+ × \d+)/,'<bdi dir="ltr">$1</bdi>')+(/\d/.test(rm.d)?' ס״מ':''):'';
+  if(rm!==state.room){state.room=rm;roomName.textContent=rm?rm.n:'כניסה';roomName.title=roomName.textContent;roomDims.innerHTML=rm&&rm.d?rm.d.replace(/(\d+ × \d+)/,'<bdi dir="ltr">$1</bdi>')+(/\d/.test(rm.d)?' ס״מ':''):'';
     Object.entries(navBtns).forEach(([k,b])=>b.setAttribute('aria-current',String(!!rm&&rm.k===k)));}
   drawMap();renderer.render(scene,camera);requestAnimationFrame(tick);}
 
